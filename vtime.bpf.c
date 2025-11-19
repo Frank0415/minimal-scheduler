@@ -3,6 +3,7 @@
 #include "vmlinux.h"
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
+#include <linux/version.h>
 
 // Define a shared Dispatch Queue (DSQ) ID
 #define SHARED_DSQ_ID 0
@@ -15,11 +16,13 @@
     BPF_PROG(name, ##args)
 
 // We use the new names from 6.13 to make it more readable
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 13, 0)
 #define scx_bpf_dsq_insert scx_bpf_dispatch
 #define scx_bpf_dsq_insert_vtime scx_bpf_dispatch_vtime
 #define scx_bpf_dsq_move_to_local scx_bpf_consume
 #define scx_bpf_dsq_move scx_bpf_dispatch_from_dsq
 #define scx_bpf_dsq_move_vtime scx_bpf_dispatch_vtime_from_dsq
+#endif
 
 #define SLICE SCX_SLICE_DFL
 
@@ -38,7 +41,7 @@ s32 BPF_STRUCT_OPS(sched_select_cpu, struct task_struct *p, s32 prev_cpu, u64 wa
   bool is_idle = 0;
   s32 cpu = scx_bpf_select_cpu_dfl(p, prev_cpu, wake_flags, &is_idle);
   if (is_idle) {
-    scx_bpf_dispatch(p, SCX_DSQ_LOCAL, SLICE, 0);
+    scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SLICE, 0);
   }
   return cpu;
 }

@@ -3,6 +3,7 @@
 #include "vmlinux.h"
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_tracing.h>
+#include <linux/version.h>
 
 #define BPF_FOR_EACH_ITER (&___it)
 
@@ -17,11 +18,13 @@
     BPF_PROG(name, ##args)
 
 // We use the new names from 6.13 to make it more readable
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 13, 0)
 #define scx_bpf_dsq_insert scx_bpf_dispatch
 #define scx_bpf_dsq_insert_vtime scx_bpf_dispatch_vtime
 #define scx_bpf_dsq_move_to_local scx_bpf_consume
 #define scx_bpf_dsq_move scx_bpf_dispatch_from_dsq
 #define scx_bpf_dsq_move_vtime scx_bpf_dispatch_vtime_from_dsq
+#endif
 
 
 
