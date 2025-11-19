@@ -1,6 +1,14 @@
 Minimal Scheduler
 =================
 
+> [!NOTE]
+>
+> Changes after fork include:
+>
+> 1. Changing the interface to match the Linux version being used. For exmaple you can look at [scx_bpf_dispatch](https://docs.ebpf.io/linux/kfuncs/scx_bpf_dispatch/) to see the changes yourself. 
+> 
+> The author uses 6.17 version of `sched_ext` kernel as of writing this, and due to the nature of rolling release version that the author uses the version might change. The relavant Documentation has also been changed.
+
 In the following a short tutorial for creating a minimal scheduler written with sched_ext in C. 
 This scheduler uses a global scheduling queue from which 
 every CPU gets its tasks to run for a time slice. 
@@ -12,10 +20,7 @@ This short tutorial covers the basics; to learn more, visit the resources from t
 
 Requirements
 ------------
-We need a 6.12 kernel or a patched 6.11 kernel to build a custom scheduler.
-You can get a kernel patched with the scheduler extensions on Ubuntu 24.10 from 
-[here](https://launchpad.net/~arighi/+archive/ubuntu/sched-ext-unstable),
-or you can use [CachyOS](https://cachyos.org/) and install a patched kernel from there.
+This scheduler is written with linux `sched_ext` kernel version 6.17. Other versions might work, but are untested.
 
 Furthermore, you also need
 - a recent `clang` for compilation
